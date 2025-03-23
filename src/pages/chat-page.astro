@@ -1,0 +1,114 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ChatMessage from '../components/ChatMessage.astro';
+import ChatInput from '../components/ChatInput.astro';
+
+const messages = [
+    {
+        message: "Hey there! Welcome to our chat app 👋",
+        sender: "Alice",
+        timestamp: new Date(Date.now() - 3600000),
+        isOwn: false
+    },
+    {
+        message: "Thanks! Love the design",
+        sender: "You",
+        timestamp: new Date(Date.now() - 1800000),
+        isOwn: true
+    },
+    {
+        message: "The gradient effects are really cool!",
+        sender: "Alice",
+        timestamp: new Date(Date.now() - 900000),
+        isOwn: false
+    }
+];
+
+// Handle form submission on the server
+if (Astro.request.method === 'POST') {
+    const body = await Astro.request.formData();
+    let formData = Object.fromEntries(body);
+    messages.push({
+        message: formData.message,
+        sender: "You",
+        timestamp: new Date(),
+        isOwn: true
+    });
+}
+
+---
+
+
+<Layout>
+    <div class="chat-container">
+        <header>
+            <div class="header-content">
+            <h1 class="gradient-text">Gym Buddy</h1>
+            <div class="online-status">online</div>
+            </div>
+        </header>
+        
+        <div class="messages-container">
+            {messages.map((msg) => (
+            <ChatMessage {...msg} />
+            ))}
+        </div>
+        
+        <ChatInput />
+        </div>
+</Layout>
+
+
+<style>
+    .gradient-text {
+        background: linear-gradient(90deg, #fbbf24, #f472b6);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .online-status::before {
+        content: "•";
+        color: #3b82f6;
+        margin-right: 0.5rem;
+    }
+    
+    .chat-container {
+        display: flex;
+        flex-direction: column;
+        height: 100vh;
+        background-color: #f9fafb;
+    }
+
+    header {
+        background: white;
+        border-bottom: 1px solid #f3f4f6;
+        padding: 1rem;
+    }
+
+    .header-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        max-width: 64rem;
+        margin: 0 auto;
+    }
+
+    h1 {
+        font-size: 1.25rem;
+        font-weight: 600;
+    }
+
+    .online-status {
+        font-size: 0.875rem;
+        color: #6b7280;
+    }
+
+    .messages-container {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1rem;
+        max-width: 64rem;
+        margin: 0 auto;
+        width: 100%;
+    }
+</style>

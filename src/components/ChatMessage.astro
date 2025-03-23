@@ -1,0 +1,97 @@
+---
+import { format } from 'date-fns';
+
+interface Props {
+    message: string;
+    sender: string;
+    timestamp: Date;
+    isOwn?: boolean;
+}
+
+const { message, sender, timestamp, isOwn = false } = Astro.props;
+---
+
+<div class={`message ${isOwn ? 'own-message' : ''}`}>
+    <div class={`avatar ${isOwn ? 'own-avatar' : ''}`}>
+        {sender[0].toUpperCase()}
+    </div>
+    <div class="message-content">
+        <div class={`message-bubble ${isOwn ? 'own-bubble' : ''}`}>
+        <p class={isOwn ? 'own-text' : ''}>{message}</p>
+        </div>
+        <div class="timestamp">
+        {format(timestamp, 'HH:mm')}
+        </div>
+    </div>
+</div>
+
+<style> 
+    .message {
+        display: flex;
+        gap: 0.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .own-message {
+        flex-direction: row-reverse;
+    }
+
+    .avatar {
+        flex-shrink: 0;
+        width: 2rem;
+        height: 2rem;
+        border-radius: 50%;
+        background-color: #9ca3af;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+    }
+
+    .own-avatar {
+        background: linear-gradient(90deg, #fbbf24, #f472b6);
+    }
+
+    .message-content {
+        max-width: 70%;
+    } 
+
+    .own-message .message-content {
+        align-items: flex-end;
+    }
+
+    .message-bubble {
+        padding: 0.75rem;
+        border-radius: 1rem;
+        background: white;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    }
+
+    .own-bubble {
+        background: linear-gradient(135deg, #3C1642, #3C1642);
+        color: white;
+    }
+
+    .message-bubble p {
+        font-size: 0.875rem;
+        line-height: 1.25rem;
+    }
+
+    .own-text{
+        background: linear-gradient(90deg, #ffff00, #ff00ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .timestamp {
+        font-size: 0.75rem;
+        color: #6b7280;
+        margin-top: 0.25rem;
+    }
+
+    .own-message .timestamp {
+        text-align: right;
+        color: #d1d5db;
+    }
+</style>

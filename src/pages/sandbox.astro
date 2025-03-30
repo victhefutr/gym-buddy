@@ -1,5 +1,12 @@
 ---
 import Counter from "../components/Counter";
+import App from "../components/App";
+import Layout from "../layouts/Layout.astro";
 ---
 
+<Layout>
+
 <Counter client:load/>
+
+<App client:load/>
+</Layout>

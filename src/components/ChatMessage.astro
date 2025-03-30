@@ -11,87 +11,36 @@ interface Props {
 const { message, sender, timestamp, isOwn = false } = Astro.props;
 ---
 
-<div class={`message ${isOwn ? 'own-message' : ''}`}>
-    <div class={`avatar ${isOwn ? 'own-avatar' : ''}`}>
+<div class={`flex gap-2 mb-4 ${isOwn ? 'flex-row-reverse' : ''}`}>
+    <div class={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium text-white ${
+        isOwn 
+        ? 'bg-gradient-to-r from-amber-400 to-pink-400' 
+        : 'bg-gray-400'
+    }`}>
         {sender[0].toUpperCase()}
     </div>
-    <div class="message-content">
-        <div class={`message-bubble ${isOwn ? 'own-bubble' : ''}`}>
-        <p class={isOwn ? 'own-text' : ''}>{message}</p>
+    
+    <div class={`max-w-[70%] ${isOwn ? 'items-end' : ''}`}>
+        <div class={`px-4 py-3 rounded-2xl shadow-sm ${
+        isOwn 
+            ? 'bg-gradient-to-br from-indigo-900 to-purple-900 text-white' 
+            : 'bg-white border border-gray-100'
+        }`}>
+        <p class={`text-sm leading-relaxed ${
+            isOwn 
+            ? 'bg-gradient-to-r from-yellow-300 to-pink-500 text-transparent bg-clip-text font-medium' 
+            : ''
+        }`}>
+            {message}
+        </p>
         </div>
-        <div class="timestamp">
+        
+        <div class={`text-xs mt-1 ${
+        isOwn 
+            ? 'text-right text-gray-300' 
+            : 'text-gray-500'
+        }`}>
         {format(timestamp, 'HH:mm')}
         </div>
     </div>
 </div>
-
-<style> 
-    .message {
-        display: flex;
-        gap: 0.5rem;
-        margin-bottom: 1rem;
-    }
-
-    .own-message {
-        flex-direction: row-reverse;
-    }
-
-    .avatar {
-        flex-shrink: 0;
-        width: 2rem;
-        height: 2rem;
-        border-radius: 50%;
-        background-color: #9ca3af;
-        color: white;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.875rem;
-    }
-
-    .own-avatar {
-        background: linear-gradient(90deg, #fbbf24, #f472b6);
-    }
-
-    .message-content {
-        max-width: 70%;
-    } 
-
-    .own-message .message-content {
-        align-items: flex-end;
-    }
-
-    .message-bubble {
-        padding: 0.75rem;
-        border-radius: 1rem;
-        background: white;
-        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-    }
-
-    .own-bubble {
-        background: linear-gradient(135deg, #3C1642, #3C1642);
-        color: white;
-    }
-
-    .message-bubble p {
-        font-size: 0.875rem;
-        line-height: 1.25rem;
-    }
-
-    .own-text{
-        background: linear-gradient(90deg, #ffff00, #ff00ff);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .timestamp {
-        font-size: 0.75rem;
-        color: #6b7280;
-        margin-top: 0.25rem;
-    }
-
-    .own-message .timestamp {
-        text-align: right;
-        color: #d1d5db;
-    }
-</style>

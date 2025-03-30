@@ -6,8 +6,11 @@ import clerk from "@clerk/astro";
 import react from "@astrojs/react";
 
 
+import db from "@astrojs/db";
+
+
 export default defineConfig({
-  integrations: [clerk(), react()],
+  integrations: [clerk(), react(), db()],
   adapter: node({ mode: "standalone" }),
   output: "server",
 });

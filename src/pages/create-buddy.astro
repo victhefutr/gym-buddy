@@ -1,6 +1,30 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import { SignedIn, UserButton } from "@clerk/astro/components";
+import { db, MyAssistant } from 'astro:db';
+import { createAssistant, createThread } from './api/assistant';
+import { SignIn } from "@clerk/astro/components"
+
+
+if (Astro.request.method === "POST") {
+    const formData = await Astro.request.formData();
+    const userInstructions = formData.get("instructions");
+
+    if (userInstructions) {
+        const assistant = await createAssistant("gym buddies", userInstructions.toString());
+        const thread = await createThread(userInstructions.toString());
+
+        //TODO
+        await db.insert(MyAssistant).values({
+            assistant_id: assistant.assistant_id,
+            thread_id: thread.thread_id,
+            instructions: userInstructions.toString(),
+        });
+    }
+
+    return Astro.redirect("/chat-page");
+    
+}
 ---
 
 <Layout>
@@ -37,7 +61,7 @@ import { SignedIn, UserButton } from "@clerk/astro/components";
             <!-- Input Field -->
             <form method="POST">
             <div class="input-container">
-                <input type="text" placeholder="Ask me anything..." />
+                <input type="text" name="instructions" placeholder="Ask me anything..." />
                 <button class="send-btn">↑</button>
                 </div>
             </form>

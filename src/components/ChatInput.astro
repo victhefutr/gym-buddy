@@ -1,59 +1,17 @@
----
----
+<form  class="flex items-center gap-2 p-4 bg-white/80 backdrop-blur-md border-t border-gray-100 max-w-4xl mx-auto w-full shadow-sm"
+        method="POST">
 
-<form class="chat-input" action="post">
-    <input
+        <input
         type="text"
         name="message"
         placeholder="Type your message..."
-    />
-    <button type="submit" class="gradient-bg">
+        class="flex-1 px-4 py-3 rounded-xl border border-gray-200 text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all duration-200"
+        />
+        <button
+        type="submit"
+        class="bg-gradient-to-r from-orange-500 to-amber-500 px-5 py-3 rounded-xl text-white text-sm font-medium hover:shadow-lg hover:opacity-90 active:opacity-75 transition-all duration-200"
+        >
         Send
-    </button>
+        </button>
+
 </form>
-
-<script>
-
-</script>
-
-<style>
-.chat-input {
-    display: flex;
-    gap: 0.5rem;
-    padding: 1rem;
-    background: rgba(255, 255, 255, 0.8);
-    backdrop-filter: blur(8px);
-    border-top: 1px solid #f3f4f6;
-    max-width: 64rem;
-    margin: 0 auto;
-    width: 100%;
-}
-
-input {
-    flex: 1;
-    padding: 0.5rem 1rem;
-    border-radius: 0.75rem;
-    border: 1px solid #e5e7eb;
-    font-size: 0.875rem;
-}
-
-input:focus {
-    outline: none;
-    border-color: #FF6B00;
-}
-
-button {
-    background: linear-gradient(83.21deg, #FF6B00 0%, #FFA500 100%);
-    padding: 0.5rem 1.5rem;
-    border-radius: 0.75rem;
-    border: none;
-    color: white;
-    font-size: 0.875rem;
-    cursor: pointer;
-    transition: opacity 0.2s;
-}
-
-button:hover {
-    opacity: 0.9;
-}
-</style>

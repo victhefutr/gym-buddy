@@ -2,113 +2,68 @@
 import Layout from '../layouts/Layout.astro';
 import ChatMessage from '../components/ChatMessage.astro';
 import ChatInput from '../components/ChatInput.astro';
+import { db, Messages, MyAssistant } from 'astro:db';
+import { sendMessage } from './api/assistant';
 
-const messages = [
-    {
-        message: "Hey there! Welcome to our chat app 👋",
-        sender: "Alice",
-        timestamp: new Date(Date.now() - 3600000),
-        isOwn: false
-    },
-    {
-        message: "Thanks! Love the design",
-        sender: "You",
-        timestamp: new Date(Date.now() - 1800000),
-        isOwn: true
-    },
-    {
-        message: "The gradient effects are really cool!",
-        sender: "Alice",
-        timestamp: new Date(Date.now() - 900000),
-        isOwn: false
-    }
-];
+
+const assistantCache = await db.select().from(MyAssistant).limit(1)
+const assistant_id = assistantCache[0].assistant_id
+const thread_id = assistantCache[0].thread_id
+let assistant_response = ""
+
 
 // Handle form submission on the server
 if (Astro.request.method === 'POST') {
-    const body = await Astro.request.formData();
-    let formData = Object.fromEntries(body);
-    messages.push({
-        message: formData.message,
-        sender: "You",
-        timestamp: new Date(),
-        isOwn: true
-    });
+    const formData = await Astro.request.formData();
+    const message = formData.get('message');
+
+    if (message) {
+        assistant_response = await sendMessage(message.toString(), thread_id, assistant_id, "chidera");
+
+        await db.insert(Messages).values({
+            message: message.toString(), // Ensure message is a string
+            sender: 'You',
+            timestamp: new Date(),
+            isOwn: true,
+        });
+
+
+    console.log('message sent ------->');
+    }
+
+    await db.insert(Messages).values({
+            message: assistant_response.response,
+            sender: 'Assistant',
+            timestamp: new Date(),
+            isOwn: false,
+        });
+    
 }
 
+
+
+// Fetch messages from the database after potential insertion
+const chat = await db.select().from(Messages);
 ---
 
-
 <Layout>
-    <div class="chat-container">
-        <header>
-            <div class="header-content">
-            <h1 class="gradient-text">Gym Buddy</h1>
-            <div class="online-status">online</div>
+    <div class="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+        <header class="bg-white border-b border-gray-100 shadow-sm">
+        <div class="flex items-center justify-between max-w-4xl mx-auto p-4">
+            <h1 class="text-xl font-semibold bg-gradient-to-r from-amber-400 to-pink-500 bg-clip-text text-transparent">
+            Gym Buddy
+            </h1>
+            <div class="text-sm text-gray-500 flex items-center">
+            <span class="h-2 w-2 rounded-full bg-blue-500 inline-block mr-2 animate-pulse"></span>
+            online
             </div>
+        </div>
         </header>
-        
-        <div class="messages-container">
-            {messages.map((msg) => (
-            <ChatMessage {...msg} />
-            ))}
+
+        <div class="flex-1 overflow-y-auto p-4 max-w-4xl mx-auto w-full space-y-4 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent">
+        {chat.map((msg) => <ChatMessage {...msg} />)}
         </div>
-        
+
         <ChatInput />
-        </div>
+    </div>
 </Layout>
-
-
-<style>
-    .gradient-text {
-        background: linear-gradient(90deg, #fbbf24, #f472b6);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-    }
-
-    .online-status::before {
-        content: "•";
-        color: #3b82f6;
-        margin-right: 0.5rem;
-    }
-    
-    .chat-container {
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        background-color: #f9fafb;
-    }
-
-    header {
-        background: white;
-        border-bottom: 1px solid #f3f4f6;
-        padding: 1rem;
-    }
-
-    .header-content {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        max-width: 64rem;
-        margin: 0 auto;
-    }
-
-    h1 {
-        font-size: 1.25rem;
-        font-weight: 600;
-    }
-
-    .online-status {
-        font-size: 0.875rem;
-        color: #6b7280;
-    }
-
-    .messages-container {
-        flex: 1;
-        overflow-y: auto;
-        padding: 1rem;
-        max-width: 64rem;
-        margin: 0 auto;
-        width: 100%;
-    }
-</style>
